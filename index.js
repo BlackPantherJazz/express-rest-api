@@ -13,6 +13,22 @@ app.use((req, res, next) => {
   next();
 });
 
+// Valid API keys (in a real app, these would be in a database)
+const API_KEYS = ["henny-key-123", "test-key-456", "admin-key-789"];
+
+// API key middleware
+app.use('/api', (req, res, next) => {
+  const key = req.query.api_key;
+  if (!key) {
+    return res.status(401).json({ message: "API key is required" });
+  }
+  if (!API_KEYS.includes(key)) {
+    return res.status(403).json({ message: "Invalid API key" });
+  }
+  next();
+});
+
+
 // Mount the routers
 app.use('/api/users', usersRouter);
 app.use('/api/posts', postsRouter);
